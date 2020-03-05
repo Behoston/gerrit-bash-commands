@@ -32,20 +32,20 @@ function _branch_check_if_active {
 
 function branch_push_for {
     OPTIND=0
-    RECIVE_PACK='git receive-pack'
+    QUERY_PARAMS='%'
     while getopts "r:" O; do
         case "$O" in
           r)
-            RECIVE_PACK="$RECIVE_PACK --reviewer $OPTARG"
+            QUERY_PARAMS="${QUERY_PARAMS}r=${OPTARG},"
             ;;
           c)
-            RECIVE_PACK="$RECIVE_PACK --cc $OPTARG"
+            QUERY_PARAMS="${QUERY_PARAMS}cc=${OPTARG},"
             ;;
         esac
     done;
     shift $((OPTIND-1));
     _branch_check_if_active || return 1
-    git push --receive-pack="$RECIVE_PACK" origin "HEAD:refs/for/$CURRENT_BRANCH" $@
+    git push origin "HEAD:refs/for/${CURRENT_BRANCH}${QUERY_PARAMS: : -1}" $@
 }
 
 function branch_push_heads {
